@@ -1,0 +1,52 @@
+Source: lingmo-session
+Section: admin
+Priority: optional
+Maintainer: Lingmo OS Team <team@lingmo.org>
+Build-Depends:
+  debhelper (>= 11),
+  debhelper-compat (= 11),
+  cargo,
+  just
+Standards-Version: 4.3.0
+Homepage: https://github.com/Matrinsoft/lingmo-session
+
+Package: lingmo-session
+Architecture: amd64 arm64
+Conflicts: seatd
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends},
+  lingmo-app-library,
+  lingmo-applets,
+  lingmo-bg,
+  lingmo-comp,
+  lingmo-files,
+  lingmo-greeter,
+  lingmo-icons,
+  lingmo-idle,
+  lingmo-launcher,
+  lingmo-notifications,
+  lingmo-osd,
+  lingmo-panel,
+  lingmo-randr,
+  lingmo-screenshot,
+  lingmo-settings,
+  lingmo-settings-daemon,
+  lingmo-workspaces,
+  fonts-open-sans,
+  gnome-keyring,
+  libsecret-1-0,
+  pop-fonts,
+  switcheroo-control,
+  xdg-desktop-portal-lingmo,
+  xwayland,
+Recommends:
+  lingmo-edit,
+  lingmo-monitor,
+  lingmo-player,
+  lingmo-store,
+  lingmo-term,
+  lingmo-wallpapers,
+  orca,
+  system-config-printer,
+Description: The session for the COSMIC desktop
