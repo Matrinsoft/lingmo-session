@@ -11,7 +11,7 @@ publish = false
 [dependencies]
 color-eyre = "0.6"
 futures-util = "0.3"
-cosmic-dbus-a11y = { git = "https://github.com/Matrinsoft/dbus-settings-bindings" }
+cosmic-dbus-a11y = { git = "https://github.com/pop-os/dbus-settings-bindings" }
 freedesktop-desktop-entry = { version = "0.8", optional = true }
 shell-words = { version = "1.1.1", optional = true }
 dirs = { version = "6.0.0", optional = true }
