@@ -657,7 +657,7 @@ dependencies = [
 [[package]]
 name = "launch-pad"
 version = "1.0.1"
-source = "git+https://github.com/Matrinsoft/launch-pad#5b516ee6a012b5ad4a5acc0cf51b4472fc6733af"
+source = "git+https://github.com/pop-os/launch-pad#5b516ee6a012b5ad4a5acc0cf51b4472fc6733af"
 dependencies = [
  "libc",
  "log",
