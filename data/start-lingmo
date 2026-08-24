@@ -9,7 +9,7 @@ if command -v systemctl >/dev/null; then
     # reset them so that they don't break this startup
     for unit in $(systemctl --user --no-legend --state=failed --plain list-units | cut -f1 -d' '); do
         partof="$(systemctl --user show -p PartOf --value "$unit")"
-        for target in cosmic-session.target graphical-session.target; do
+        for target in lingmo-session.target graphical-session.target; do
             if [ "$partof" = "$target" ]; then
                 systemctl --user reset-failed "$unit"
                 break
@@ -28,8 +28,8 @@ if [ -n "${SHELL}" ]; then
     fi
 fi
 
-export XDG_CURRENT_DESKTOP="${XDG_CURRENT_DESKTOP:=COSMIC}"
-export XDG_SESSION_DESKTOP="${XDG_SESSION_DESKTOP:=COSMIC}"
+export XDG_CURRENT_DESKTOP="${XDG_CURRENT_DESKTOP:=LINGMO}"
+export XDG_SESSION_DESKTOP="${XDG_SESSION_DESKTOP:=LINGMO}"
 export XDG_SESSION_TYPE="${XDG_SESSION_TYPE:=wayland}"
 export _JAVA_AWT_WM_NONREPARENTING=1
 export GDK_BACKEND=wayland,x11
@@ -37,18 +37,18 @@ export MOZ_ENABLE_WAYLAND=1
 export QT_QPA_PLATFORM="wayland;xcb"
 export QT_AUTO_SCREEN_SCALE_FACTOR=1
 export QT_ENABLE_HIGHDPI_SCALING=1
-export DCONF_PROFILE=cosmic
+export DCONF_PROFILE=lingmo
 
-# Set the QT platform theme to CuteCosmic. Fallback to qt6ct if CuteCosmic is not installed.
+# Set the QT platform theme to CuteLingmo. Fallback to qt6ct if CuteLingmo is not installed.
 if [ -z "$QT_QPA_PLATFORMTHEME" ]; then
-    export QT_QPA_PLATFORMTHEME=cosmic
+    export QT_QPA_PLATFORMTHEME=lingmo
     for QT_PLUGIN_PATH in /usr/lib{*,/*}/qt6/plugins; do
-        if [ -f "${QT_PLUGIN_PATH}/platformthemes/libcutecosmictheme.so" ]; then
-            # CuteCosmic found, no need for a fallback.
-            export QT_QPA_PLATFORMTHEME=cosmic
+        if [ -f "${QT_PLUGIN_PATH}/platformthemes/libcutelingmotheme.so" ]; then
+            # CuteLingmo found, no need for a fallback.
+            export QT_QPA_PLATFORMTHEME=lingmo
             break
         elif [ -f "${QT_PLUGIN_PATH}/platformthemes/libqt6ct.so" ] || [ -f "${QT_PLUGIN_PATH}/platformthemes/libqt5ct.so" ]; then
-            # Fallback to qt6ct, but keep looking for CuteCosmic.
+            # Fallback to qt6ct, but keep looking for CuteLingmo.
             # Note that "qt5ct" is compatible with both qt5ct and qt6ct.
             export QT_QPA_PLATFORMTHEME=qt5ct
         fi
@@ -106,9 +106,9 @@ if command -v systemctl >/dev/null; then
     done
 fi
 
-# Run cosmic-session
+# Run lingmo-session
 if [[ -z "${DBUS_SESSION_BUS_ADDRESS}" ]]; then
-    exec /usr/bin/dbus-run-session -- /usr/bin/cosmic-session
+    exec /usr/bin/dbus-run-session -- /usr/bin/lingmo-session
 else
-    exec /usr/bin/cosmic-session
+    exec /usr/bin/lingmo-session
 fi

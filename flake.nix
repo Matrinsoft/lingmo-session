@@ -1,5 +1,5 @@
 {
-  description = "Session manager for the COSMIC desktop environment";
+  description = "Session manager for the Lingmo desktop environment";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -39,33 +39,33 @@
         };
 
         cargoArtifacts = craneLib.buildDepsOnly pkgDef;
-        cosmic-session = craneLib.buildPackage (pkgDef // {
+        lingmo-session = craneLib.buildPackage (pkgDef // {
           inherit cargoArtifacts;
         });
       in {
         checks = {
-          inherit cosmic-session;
+          inherit lingmo-session;
         };
 
-        packages.default = cosmic-session.overrideAttrs (oldAttrs: rec {
+        packages.default = lingmo-session.overrideAttrs (oldAttrs: rec {
         buildPhase = ''
-            just prefix=$out xdp_cosmic=/run/current-system/sw/bin/xdg-desktop-portal-cosmic build 
+            just prefix=$out xdp_cosmic=/run/current-system/sw/bin/xdg-desktop-portal-lingmo build 
           '';
         installPhase = ''
             runHook preInstallPhase
             just prefix=$out install
           '';
         preInstallPhase = ''
-            substituteInPlace data/start-cosmic --replace '#!/bin/bash' "#!${pkgs.bash}/bin/bash"
-            substituteInPlace data/start-cosmic --replace '/usr/bin/cosmic-session' "${placeholder "out"}/bin/cosmic-session"
-            substituteInPlace data/start-cosmic --replace '/usr/bin/dbus-run-session' "${pkgs.dbus}/bin/dbus-run-session"
-            substituteInPlace data/cosmic.desktop --replace '/usr/bin/start-cosmic' "${placeholder "out"}/bin/start-cosmic"
+            substituteInPlace data/start-lingmo --replace '#!/bin/bash' "#!${pkgs.bash}/bin/bash"
+            substituteInPlace data/start-lingmo --replace '/usr/bin/lingmo-session' "${placeholder "out"}/bin/lingmo-session"
+            substituteInPlace data/start-lingmo --replace '/usr/bin/dbus-run-session' "${pkgs.dbus}/bin/dbus-run-session"
+            substituteInPlace data/lingmo.desktop --replace '/usr/bin/start-lingmo' "${placeholder "out"}/bin/start-lingmo"
         '';  
-          passthru.providedSessions = [ "cosmic" ];
+          passthru.providedSessions = [ "lingmo" ];
         });
 
         apps.default = flake-utils.lib.mkApp {
-          drv = cosmic-session;
+          drv = lingmo-session;
         };
 
         devShells.default = pkgs.mkShell {

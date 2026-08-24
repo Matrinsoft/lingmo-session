@@ -35,14 +35,14 @@ pub async fn set_systemd_environment(key: &str, value: &str) {
 pub async fn start_systemd_target() {
 	run_optional_command(
 		"systemctl",
-		&["--user", "start", "--no-block", "cosmic-session.target"],
+		&["--user", "start", "--no-block", "lingmo-session.target"],
 	)
 }
 
 pub fn stop_systemd_target() {
 	run_optional_command(
 		"systemctl",
-		&["--user", "stop", "--no-block", "cosmic-session.target"],
+		&["--user", "stop", "--no-block", "lingmo-session.target"],
 	)
 }
 

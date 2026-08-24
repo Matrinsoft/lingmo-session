@@ -1,6 +1,6 @@
 [package]
-name = "cosmic-session"
-description = "The session manager for the COSMIC desktop environment"
+name = "lingmo-session"
+description = "The session manager for the Lingmo desktop environment"
 version = "1.0.0"
 license = "GPL-3.0-only"
 edition = "2024"

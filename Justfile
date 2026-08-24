@@ -2,7 +2,7 @@ rootdir := ''
 prefix := '/usr'
 cargo-target-dir := env('CARGO_TARGET_DIR', 'target')
 orca := '/usr/bin/orca'
-cosmic_dconf_profile := prefix + '/share/dconf/profile/cosmic'
+lingmo_dconf_profile := prefix + '/share/dconf/profile/lingmo'
 usrdir := absolute_path(clean(rootdir / prefix))
 bindir := usrdir / 'bin'
 systemddir := usrdir / 'lib' / 'systemd' / 'user'
@@ -32,25 +32,25 @@ clean-dist: clean
 
 # Installs files into the system
 install:
-    echo {{ cosmic_dconf_profile }}
+    echo {{ lingmo_dconf_profile }}
     # main binary
-    install -Dm0755 {{ cargo-target-dir }}/release/cosmic-session {{ bindir }}/cosmic-session
+    install -Dm0755 {{ cargo-target-dir }}/release/lingmo-session {{ bindir }}/lingmo-session
 
     # session start script
-    install -Dm0755 data/start-cosmic {{ bindir }}/start-cosmic
-    sed -i "s|DCONF_PROFILE=cosmic|DCONF_PROFILE={{ cosmic_dconf_profile }}|" {{ bindir }}/start-cosmic
+    install -Dm0755 data/start-lingmo {{ bindir }}/start-lingmo
+    sed -i "s|DCONF_PROFILE=lingmo|DCONF_PROFILE={{ lingmo_dconf_profile }}|" {{ bindir }}/start-lingmo
 
     # systemd target
-    install -Dm0644 data/cosmic-session.target {{ systemddir }}/cosmic-session.target
+    install -Dm0644 data/lingmo-session.target {{ systemddir }}/lingmo-session.target
 
     # session
-    install -Dm0644 data/cosmic.desktop {{ sessiondir }}/cosmic.desktop
+    install -Dm0644 data/lingmo.desktop {{ sessiondir }}/lingmo.desktop
 
     # mimeapps
-    install -Dm0644 data/cosmic-mimeapps.list {{ applicationdir }}/cosmic-mimeapps.list
+    install -Dm0644 data/lingmo-mimeapps.list {{ applicationdir }}/lingmo-mimeapps.list
 
     # dconf profile
-    install -Dm644 data/dconf/profile/cosmic {{ rootdir }}/{{ cosmic_dconf_profile }}
+    install -Dm644 data/dconf/profile/lingmo {{ rootdir }}/{{ lingmo_dconf_profile }}
 
 # Vendor Cargo dependencies locally
 vendor:

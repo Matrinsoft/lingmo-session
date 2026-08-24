@@ -42,7 +42,7 @@ use crate::notifications::{
 #[cfg(feature = "autostart")]
 const AUTOSTART_DIR: &'static str = "autostart";
 #[cfg(feature = "autostart")]
-const ENVIRONMENT_NAME: &'static str = "COSMIC";
+const ENVIRONMENT_NAME: &'static str = "LINGMO";
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
@@ -81,9 +81,9 @@ async fn main() -> Result<()> {
 	let (session_tx, mut session_rx) = tokio::sync::mpsc::channel(10);
 	let session_tx_clone = session_tx.clone();
 	let _conn = zbus::connection::Builder::session()?
-		.name("com.system76.CosmicSession")?
+		.name("com.lingmoos.LingmoSession")?
 		.serve_at(
-			"/com/system76/CosmicSession",
+			"/com/lingmoos/LingmoSession",
 			service::SessionService { session_tx },
 		)?
 		.build()
@@ -118,11 +118,11 @@ async fn start(
 	session_tx: Sender<SessionRequest>,
 	session_rx: &mut Receiver<SessionRequest>,
 ) -> Result<Status> {
-	info!("Starting cosmic-session");
+	info!("Starting lingmo-session");
 
 	let mut args = env::args().skip(1);
 	let (executable, args) = (
-		args.next().unwrap_or_else(|| String::from("cosmic-comp")),
+		args.next().unwrap_or_else(|| String::from("lingmo-comp")),
 		args.collect::<Vec<_>>(),
 	);
 
@@ -151,11 +151,11 @@ async fn start(
 		.into_iter()
 		.collect::<Vec<_>>();
 	info!(
-		"got environmental variables from cosmic-comp: {:?}",
+		"got environmental variables from lingmo-comp: {:?}",
 		env_vars
 	);
 
-	// now that cosmic-comp is ready, set XDG_SESSION_TYPE=wayland for new processes
+	// now that lingmo-comp is ready, set XDG_SESSION_TYPE=wayland for new processes
 	env_vars.push(("XDG_SESSION_TYPE".to_string(), "wayland".to_string()));
 	systemd::set_systemd_environment("XDG_SESSION_TYPE", "wayland").await;
 
@@ -193,7 +193,7 @@ async fn start(
 				Ok(proxy) => match proxy
 					.inhibit(
 						logind_zbus::manager::InhibitType::HandlePowerKey,
-						"Cosmic Session",
+						"Lingmo Session",
 						"Show confirmation dialog.",
 						"block",
 					)
@@ -221,14 +221,14 @@ async fn start(
 		None
 	};
 
-	let stdout_span = info_span!(parent: None, "cosmic-settings-daemon");
+	let stdout_span = info_span!(parent: None, "lingmo-settings-daemon");
 	let stderr_span = stdout_span.clone();
 	let (settings_exit_tx, settings_exit_rx) = oneshot::channel();
 	let settings_exit_tx = Arc::new(std::sync::Mutex::new(Some(settings_exit_tx)));
 	let settings_daemon = process_manager
 		.start(
 			Process::new()
-				.with_executable("cosmic-settings-daemon")
+				.with_executable("lingmo-settings-daemon")
 				.with_env(env_vars.iter().cloned())
 				.with_on_stdout(move |_, _, line| {
 					let stdout_span = stdout_span.clone();
@@ -256,9 +256,9 @@ async fn start(
 
 	// notifying the user service manager that we've reached the
 	// graphical-session.target, which should only happen after:
-	// - cosmic-comp is ready
+	// - lingmo-comp is ready
 	// - we've set any related variables
-	// - cosmic-settings-daemon is ready
+	// - lingmo-settings-daemon is ready
 	systemd::start_systemd_target().await;
 	// Always stop the target when the process exits or panics.
 	scopeguard::defer! {
@@ -285,20 +285,20 @@ async fn start(
 	let panel_key = Arc::new(Mutex::new(None));
 	let notif_key = Arc::new(Mutex::new(None));
 
-	let notifications_span = info_span!(parent: None, "cosmic-notifications");
-	let panel_span = info_span!(parent: None, "cosmic-panel");
+	let notifications_span = info_span!(parent: None, "lingmo-notifications");
+	let panel_span = info_span!(parent: None, "lingmo-panel");
 
 	let mut guard = notif_key.lock().await;
 	*guard = Some(
 		process_manager
 			.start(notifications_process(
 				notifications_span.clone(),
-				"cosmic-notifications",
+				"lingmo-notifications",
 				notif_key.clone(),
 				daemon_env_vars.clone(),
 				daemon_notifications_fd,
 				panel_span.clone(),
-				"cosmic-panel",
+				"lingmo-panel",
 				panel_key.clone(),
 				panel_env_vars.clone(),
 			))
@@ -312,12 +312,12 @@ async fn start(
 		process_manager
 			.start(notifications_process(
 				panel_span,
-				"cosmic-panel",
+				"lingmo-panel",
 				panel_key.clone(),
 				panel_env_vars,
 				panel_notifications_fd,
 				notifications_span,
-				"cosmic-notifications",
+				"lingmo-notifications",
 				notif_key,
 				daemon_env_vars,
 			))
@@ -326,29 +326,29 @@ async fn start(
 	);
 	drop(guard);
 
-	let span = info_span!(parent: None, "cosmic-app-library");
-	start_component("cosmic-app-library", span, &process_manager, &env_vars).await;
+	let span = info_span!(parent: None, "lingmo-app-library");
+	start_component("lingmo-app-library", span, &process_manager, &env_vars).await;
 
-	let span = info_span!(parent: None, "cosmic-launcher");
-	start_component("cosmic-launcher", span, &process_manager, &env_vars).await;
+	let span = info_span!(parent: None, "lingmo-launcher");
+	start_component("lingmo-launcher", span, &process_manager, &env_vars).await;
 
-	let span = info_span!(parent: None, "cosmic-workspaces");
-	start_component("cosmic-workspaces", span, &process_manager, &env_vars).await;
+	let span = info_span!(parent: None, "lingmo-workspaces");
+	start_component("lingmo-workspaces", span, &process_manager, &env_vars).await;
 
-	let span = info_span!(parent: None, "cosmic-osd");
-	start_component("cosmic-osd", span, &process_manager, &env_vars).await;
+	let span = info_span!(parent: None, "lingmo-osd");
+	start_component("lingmo-osd", span, &process_manager, &env_vars).await;
 
-	let span = info_span!(parent: None, "cosmic-bg");
-	start_component("cosmic-bg", span, &process_manager, &env_vars).await;
+	let span = info_span!(parent: None, "lingmo-background");
+	start_component("lingmo-background", span, &process_manager, &env_vars).await;
 
-	let span = info_span!(parent: None, "cosmic-greeter");
-	start_component("cosmic-greeter", span, &process_manager, &env_vars).await;
+	let span = info_span!(parent: None, "lingmo-greeter");
+	start_component("lingmo-greeter", span, &process_manager, &env_vars).await;
 
-	let span = info_span!(parent: None, "cosmic-files-applet");
-	start_component("cosmic-files-applet", span, &process_manager, &env_vars).await;
+	let span = info_span!(parent: None, "lingmo-files-applet");
+	start_component("lingmo-files-applet", span, &process_manager, &env_vars).await;
 
-	let span = info_span!(parent: None, "cosmic-idle");
-	start_component("cosmic-idle", span, &process_manager, &env_vars).await;
+	let span = info_span!(parent: None, "lingmo-idle");
+	start_component("lingmo-idle", span, &process_manager, &env_vars).await;
 
 	#[cfg(feature = "autostart")]
 	if !*is_systemd_used() {

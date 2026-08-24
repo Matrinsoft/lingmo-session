@@ -1,4 +1,4 @@
-[org.gnome.desktop.interface:COSMIC]
+[org.gnome.desktop.interface:LINGMO]
 color-scheme = "prefer-dark"
 gtk-theme = "Pop-dark"
 icon-theme = "Pop"

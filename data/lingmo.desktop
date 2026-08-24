@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Lingmo
+Comment=This session logs you into the Lingmo desktop
+Comment[sv]=Denna session loggar in dig till skrivbordsmiljön Lingmo
+Exec=/usr/bin/start-lingmo
+Type=Application
+DesktopNames=LINGMO
