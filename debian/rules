@@ -1,15 +1,19 @@
 #!/usr/bin/make -f
 
-export DESTDIR = debian/cosmic-session
+VENDOR ?= 1
+CLEAN ?= 1
+DESTDIR = debian/tmp
 
 %:
 	dh $@
 
 override_dh_auto_clean:
-	ischroot || test -f vendor.tar || just vendor
+	if test "${CLEAN}" = "1"; then \
+		cargo clean; \
+	fi
 
 override_dh_auto_build:
-	test -e vendor.tar && just build-vendored || just
+	just rootdir=$(DESTDIR) build-release
 
 override_dh_auto_install:
 	just rootdir=$(DESTDIR) install
